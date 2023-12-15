@@ -1,9 +1,12 @@
 package me.aneleu.diceplugin;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Transformation;
+
+import java.util.Map;
 
 public class RotateTask extends BukkitRunnable {
 
@@ -12,6 +15,19 @@ public class RotateTask extends BukkitRunnable {
 
     double x, y, z, axisX, axisY, axisZ, speed;
     double[] point, origin, axis;
+
+    Map<Integer, double[]> sides = Map.of(
+            1, new double[]{-0.5, 0, 0},
+            2, new double[]{0, 0.5, 0},
+            3, new double[]{0, 0, 0.5},
+            4, new double[]{0, 0, -0.5},
+            5, new double[]{0, -0.5, 0},
+            6, new double[]{0.5, 0, 0}
+    );
+
+
+
+    double angle = 0;
 
 
     public RotateTask(BlockDisplay display) {
@@ -39,12 +55,9 @@ public class RotateTask extends BukkitRunnable {
     @Override
     public void run() {
 
-        double[] rotatedPos = RotateUtil.rotateDotByVector(
-                point,
-                origin,
-                axis,
-                speed * tick
-        );
+        angle += speed;
+
+        double[] rotatedPos = RotateUtil.rotateDotByVector(point, origin, axis, speed * tick);
 
         double dx = x - rotatedPos[0];
         double dy = y - rotatedPos[1];
@@ -52,12 +65,28 @@ public class RotateTask extends BukkitRunnable {
 
         Transformation transformation = display.getTransformation();
         transformation.getTranslation().set(dx, dy, dz);
-
-        transformation.getLeftRotation().setAngleAxis( (float) speed * tick, (float) axisX, (float) axisY, (float) axisZ);
+        transformation.getLeftRotation().setAngleAxis( (float) angle, (float) axisX, (float) axisY, (float) axisZ);
         display.setTransformation(transformation);
 
         tick++;
         if (tick >= 40) {
+
+            int resultSide = -1;
+            double maxY = -64;
+            for (Map.Entry<Integer, double[]> entry: sides.entrySet()) {
+                double[] sidePos = new double[3];
+                for (int i = 0; i < 3; i ++) {
+                    sidePos[i] = entry.getValue()[i] + point[i];
+                }
+                double rotatedSideY = RotateUtil.rotateDotByVector(sidePos, origin, axis, angle)[1];
+                if (rotatedSideY > maxY) {
+                    maxY = rotatedSideY;
+                    resultSide = entry.getKey();
+                }
+            }
+
+            Bukkit.broadcast(Component.text("결과: " + resultSide));
+
             cancel();
         }
 
