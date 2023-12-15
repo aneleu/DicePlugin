@@ -16,7 +16,7 @@ public class RotateTask extends BukkitRunnable {
     double x, y, z, axisX, axisY, axisZ, speed;
     double[] point, origin, axis;
 
-    Map<Integer, double[]> sides = Map.of(
+    Map<Integer, double[]> faces = Map.of(
             1, new double[]{-0.5, 0, 0},
             2, new double[]{0, 0.5, 0},
             3, new double[]{0, 0, 0.5},
@@ -71,21 +71,21 @@ public class RotateTask extends BukkitRunnable {
         tick++;
         if (tick >= 40) {
 
-            int resultSide = -1;
+            int resultFace = -1;
             double maxY = -64;
-            for (Map.Entry<Integer, double[]> entry: sides.entrySet()) {
-                double[] sidePos = new double[3];
+            for (Map.Entry<Integer, double[]> entry: faces.entrySet()) {
+                double[] facePos = new double[3];
                 for (int i = 0; i < 3; i ++) {
-                    sidePos[i] = entry.getValue()[i] + point[i];
+                    facePos[i] = entry.getValue()[i] + point[i];
                 }
-                double rotatedSideY = RotateUtil.rotateDotByVector(sidePos, origin, axis, angle)[1];
-                if (rotatedSideY > maxY) {
-                    maxY = rotatedSideY;
-                    resultSide = entry.getKey();
+                double rotatedFaceY = RotateUtil.rotateDotByVector(facePos, origin, axis, angle)[1];
+                if (rotatedFaceY > maxY) {
+                    maxY = rotatedFaceY;
+                    resultFace = entry.getKey();
                 }
             }
 
-            Bukkit.broadcast(Component.text("결과: " + resultSide));
+            Bukkit.broadcast(Component.text("결과: " + resultFace));
 
             cancel();
         }
