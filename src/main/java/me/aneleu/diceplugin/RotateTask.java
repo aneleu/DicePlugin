@@ -26,14 +26,15 @@ public class RotateTask extends BukkitRunnable {
     );
 
 
-
     double angle = 0;
 
 
     public RotateTask(BlockDisplay display) {
 
         // 최대 속도 설정
-        int maxSpeed = 15;
+        int maxSpeed = 40;
+        // 최저 속도 설정
+        int minSpeed = 20;
 
 
         this.display = display;
@@ -44,7 +45,7 @@ public class RotateTask extends BukkitRunnable {
         axisX = Math.random();
         axisY = Math.random();
         axisZ = Math.random();
-        double magnitude = Math.sqrt(axisX*axisX + axisY*axisY + axisZ*axisZ);
+        double magnitude = Math.sqrt(axisX * axisX + axisY * axisY + axisZ * axisZ);
         axisX /= magnitude;
         axisY /= magnitude;
         axisZ /= magnitude;
@@ -52,7 +53,8 @@ public class RotateTask extends BukkitRunnable {
         point = new double[]{x, y, z};
         origin = new double[]{x - 0.5, y - 0.5, z - 0.5};
         axis = new double[]{axisX, axisY, axisZ};
-        speed = Math.toRadians(Math.random() * maxSpeed * 2 - maxSpeed);
+        speed = Math.toRadians(Math.random() * (maxSpeed - minSpeed) + minSpeed);
+        if (Math.random() > 0.5) speed *= -1;
     }
 
     @Override
@@ -60,7 +62,7 @@ public class RotateTask extends BukkitRunnable {
 
         angle += speed;
 
-        double[] rotatedPos = RotateUtil.rotateDotByVector(point, origin, axis, speed * tick);
+        double[] rotatedPos = RotateUtil.rotateDotByVector(point, origin, axis, angle);
 
         double dx = x - rotatedPos[0];
         double dy = y - rotatedPos[1];
@@ -68,7 +70,7 @@ public class RotateTask extends BukkitRunnable {
 
         Transformation transformation = display.getTransformation();
         transformation.getTranslation().set(dx, dy, dz);
-        transformation.getLeftRotation().setAngleAxis( (float) angle, (float) axisX, (float) axisY, (float) axisZ);
+        transformation.getLeftRotation().setAngleAxis((float) angle, (float) axisX, (float) axisY, (float) axisZ);
         display.setTransformation(transformation);
 
         tick++;
@@ -76,9 +78,9 @@ public class RotateTask extends BukkitRunnable {
 
             int resultFace = -1;
             double maxY = -64;
-            for (Map.Entry<Integer, double[]> entry: faces.entrySet()) {
+            for (Map.Entry<Integer, double[]> entry : faces.entrySet()) {
                 double[] facePos = new double[3];
-                for (int i = 0; i < 3; i ++) {
+                for (int i = 0; i < 3; i++) {
                     facePos[i] = entry.getValue()[i] + point[i];
                 }
                 double rotatedFaceY = RotateUtil.rotateDotByVector(facePos, origin, axis, angle)[1];
