@@ -33,7 +33,7 @@ public class DiceCommand implements TabExecutor {
             loc.setPitch(0);
 
             BlockDisplay display = (BlockDisplay) loc.getWorld().spawnEntity(loc, EntityType.BLOCK_DISPLAY);
-            display.setBlock(plugin.getServer().createBlockData(Material.STONE));
+            display.setBlock(plugin.getServer().createBlockData(Material.FURNACE));
             new RotateTask(display).runTaskTimer(plugin, 0, 1);
 
         }

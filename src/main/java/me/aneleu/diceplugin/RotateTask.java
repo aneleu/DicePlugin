@@ -38,17 +38,20 @@ public class RotateTask extends BukkitRunnable {
 
         this.display = display;
 
-        double x = display.getLocation().getX() + 0.5;
-        double y = display.getLocation().getY() + 0.5;
-        double z = display.getLocation().getZ() + 0.5;
-        double a = Math.random();
-        double b = Math.random();
-        double c = Math.random();
-        double magnitude = Math.sqrt(a*a + b*b + c*c);
+        x = display.getLocation().getX() + 0.5;
+        y = display.getLocation().getY() + 0.5;
+        z = display.getLocation().getZ() + 0.5;
+        axisX = Math.random();
+        axisY = Math.random();
+        axisZ = Math.random();
+        double magnitude = Math.sqrt(axisX*axisX + axisY*axisY + axisZ*axisZ);
+        axisX /= magnitude;
+        axisY /= magnitude;
+        axisZ /= magnitude;
 
         point = new double[]{x, y, z};
         origin = new double[]{x - 0.5, y - 0.5, z - 0.5};
-        axis = new double[]{a / magnitude, b / magnitude, c / magnitude};
+        axis = new double[]{axisX, axisY, axisZ};
         speed = Math.toRadians(Math.random() * maxSpeed * 2 - maxSpeed);
     }
 
