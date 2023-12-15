@@ -1,0 +1,7 @@
+name: DicePlugin
+version: '${version}'
+main: me.aneleu.diceplugin.DicePlugin
+api-version: '1.20'
+commands:
+  dice:
+    description: dice command
