@@ -15,7 +15,7 @@ public class RotateTask extends BukkitRunnable {
     BlockDisplay display;
 
     double initialAngle, x, y, z, axisX, axisY, axisZ, speed;
-    double[] initialAxis, point, origin, axis;
+    double[] initialAxis, initialCenterPos, point, origin, axis;
 
     Map<Integer, double[]> faces = Map.of(
             1, new double[]{-0.5, 0, 0},
@@ -57,6 +57,8 @@ public class RotateTask extends BukkitRunnable {
         axis = new double[]{axisX, axisY, axisZ};
         speed = Math.toRadians(Math.random() * (maxSpeed - minSpeed) + minSpeed);
         if (Math.random() > 0.5) speed *= -1;
+
+        initialCenterPos = RotateUtil.rotateDotByVector(point, origin, initialAxis, initialAngle);
     }
 
     @Override
@@ -64,8 +66,7 @@ public class RotateTask extends BukkitRunnable {
 
         angle += speed;
 
-        double[] rotatedPos = RotateUtil.rotateDotByVector(point, origin, initialAxis, initialAngle);
-        rotatedPos = RotateUtil.rotateDotByVector(rotatedPos, origin, axis, angle);
+        double[] rotatedPos = RotateUtil.rotateDotByVector(initialCenterPos, origin, axis, angle);
 
         double dx = x - rotatedPos[0];
         double dy = y - rotatedPos[1];
