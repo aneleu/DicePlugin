@@ -1,8 +1,10 @@
 package me.aneleu.diceplugin;
 
+import org.jetbrains.annotations.NotNull;
+
 public class RotateUtil {
 
-    public static double[] rotateDotByVector(double[] point, double[] origin, double[] axis, double theta) {
+    public static double @NotNull [] rotateDotByVector(double[] point, double[] origin, double[] axis, double theta) {
 
         double u = axis[0];
         double v = axis[1];
