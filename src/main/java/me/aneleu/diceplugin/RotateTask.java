@@ -17,29 +17,20 @@ public class RotateTask extends BukkitRunnable {
     double initialAngle, x, y, z, axisX, axisY, axisZ, speed;
     double[] initialAxis, initialCenterPos, point, origin, axis;
 
-    Map<Integer, double[]> faces = Map.of(
-            1, new double[]{-0.5, 0, 0},
-            2, new double[]{0, 0.5, 0},
-            3, new double[]{0, 0, 0.5},
-            4, new double[]{0, 0, -0.5},
-            5, new double[]{0, -0.5, 0},
-            6, new double[]{0.5, 0, 0}
-    );
-
 
     double angle = 0;
 
 
-    public RotateTask(@NotNull BlockDisplay display, double[] initialAxis, double initialAngle) {
+    public RotateTask(@NotNull BlockDisplay display, int initialFace) {
         // 최대 속도 설정
-        int maxSpeed = 40;
+        int maxSpeed = 60;
         // 최저 속도 설정
-        int minSpeed = 20;
+        int minSpeed = 30;
 
 
         this.display = display;
-        this.initialAxis = initialAxis;
-        this.initialAngle = initialAngle;
+        this.initialAxis = RotateUtil.faceAxis.get(initialFace);
+        this.initialAngle = RotateUtil.faceAngle.get(initialFace);
 
         x = display.getLocation().getX() + 0.5;
         y = display.getLocation().getY() + 0.5;
@@ -82,7 +73,7 @@ public class RotateTask extends BukkitRunnable {
 
             int resultFace = -1;
             double maxY = -64;
-            for (Map.Entry<Integer, double[]> entry : faces.entrySet()) {
+            for (Map.Entry<Integer, double[]> entry : RotateUtil.facePos.entrySet()) {
                 double[] facePos = new double[3];
                 for (int i = 0; i < 3; i++) {
                     facePos[i] = entry.getValue()[i] + point[i];
@@ -96,6 +87,8 @@ public class RotateTask extends BukkitRunnable {
                     resultFace = entry.getKey();
                 }
             }
+
+            RotateUtil.rotateDiceToFace(display, resultFace);
 
             Bukkit.broadcast(Component.text("결과: " + resultFace));
 

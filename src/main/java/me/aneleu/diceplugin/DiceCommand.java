@@ -37,36 +37,9 @@ public class DiceCommand implements CommandExecutor {
 
             Random random = new Random();
             int initialFace = random.nextInt(6) + 1;
-            double initialAngle;
-            double[] initialAxis;
-            if (initialFace == 1) {
-                initialAxis = new double[]{0, 0, 1};
-                initialAngle = Math.toRadians(-90);
-            } else if (initialFace == 2) {
-                initialAxis = new double[]{1, 0, 0};
-                initialAngle = Math.toRadians(0);
-            } else if (initialFace == 3) {
-                initialAxis = new double[]{1, 0, 0};
-                initialAngle = Math.toRadians(-90);
-            } else if (initialFace == 4) {
-                initialAxis = new double[]{1, 0, 0};
-                initialAngle = Math.toRadians(90);
-            } else if (initialFace == 5) {
-                initialAxis = new double[]{1, 0, 0};
-                initialAngle = Math.toRadians(180);
-            } else {
-                initialAxis = new double[]{0, 0, 1};
-                initialAngle = Math.toRadians(90);
-            }
+            RotateUtil.rotateDiceToFace(display, initialFace);
 
-            double[] initialTranslation = RotateUtil.rotateDotByVector(new double[]{0, 0, 0}, new double[]{-0.5, -0.5, -0.5}, initialAxis, initialAngle);
-
-            Transformation transformation = display.getTransformation();
-            transformation.getRightRotation().setAngleAxis(initialAngle, initialAxis[0], initialAxis[1], initialAxis[2]);
-            transformation.getTranslation().set(-initialTranslation[0], -initialTranslation[1], -initialTranslation[2]);
-            display.setTransformation(transformation);
-
-            new RotateTask(display, initialAxis, initialAngle).runTaskTimer(plugin, 0, 1);
+            new RotateTask(display, initialFace).runTaskTimer(plugin, 0, 1);
         }
 
 
