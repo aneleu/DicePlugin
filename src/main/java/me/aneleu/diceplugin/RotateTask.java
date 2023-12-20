@@ -71,6 +71,7 @@ public class RotateTask extends BukkitRunnable {
         tick++;
         if (tick >= 40) {
 
+            RotateUtil.combineAxisAngles(initialAxis, initialAngle, axis, angle);
             end();
         }
 
