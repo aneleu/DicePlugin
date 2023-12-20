@@ -71,29 +71,33 @@ public class RotateTask extends BukkitRunnable {
         tick++;
         if (tick >= 40) {
 
-            int resultFace = -1;
-            double maxY = -64;
-            for (Map.Entry<Integer, double[]> entry : RotateUtil.facePos.entrySet()) {
-                double[] facePos = new double[3];
-                for (int i = 0; i < 3; i++) {
-                    facePos[i] = entry.getValue()[i] + point[i];
-                }
-
-                double[] rotatedFace = RotateUtil.rotateDotByVector(facePos, origin, initialAxis, initialAngle);
-                double rotatedFaceY = RotateUtil.rotateDotByVector(rotatedFace, origin, axis, angle)[1];
-
-                if (rotatedFaceY > maxY) {
-                    maxY = rotatedFaceY;
-                    resultFace = entry.getKey();
-                }
-            }
-
-            RotateUtil.rotateDiceToFace(display, resultFace);
-
-            Bukkit.broadcast(Component.text("결과: " + resultFace));
-
-            cancel();
+            end();
         }
 
+    }
+
+    public void end() {
+        int resultFace = -1;
+        double maxY = -64;
+        for (Map.Entry<Integer, double[]> entry : RotateUtil.facePos.entrySet()) {
+            double[] facePos = new double[3];
+            for (int i = 0; i < 3; i++) {
+                facePos[i] = entry.getValue()[i] + point[i];
+            }
+
+            double[] rotatedFace = RotateUtil.rotateDotByVector(facePos, origin, initialAxis, initialAngle);
+            double rotatedFaceY = RotateUtil.rotateDotByVector(rotatedFace, origin, axis, angle)[1];
+
+            if (rotatedFaceY > maxY) {
+                maxY = rotatedFaceY;
+                resultFace = entry.getKey();
+            }
+        }
+
+        RotateUtil.rotateDiceToFace(display, resultFace);
+
+        Bukkit.broadcast(Component.text("결과: " + resultFace));
+
+        cancel();
     }
 }

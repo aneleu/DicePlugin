@@ -3,6 +3,7 @@ package me.aneleu.diceplugin;
 import org.apache.commons.math3.complex.Quaternion;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.util.Transformation;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -77,7 +78,8 @@ public class RotateUtil {
         return result;
     }
 
-    public static double[] axisangleToQuaternion(double[] axis, double angle) {
+    @Contract("_, _ -> new")
+    public static double @NotNull [] axisangleToQuaternion(double[] axis, double angle) {
         // axis를 정규화
         double norm = Math.sqrt(axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]);
         double x = axis[0] / norm;
@@ -93,7 +95,8 @@ public class RotateUtil {
         return new double[]{w, qx, qy, qz};
     }
 
-    public static double[] quaternionToAxisangle(double[] quaternion) {
+    @Contract("_ -> new")
+    public static double @NotNull [] quaternionToAxisangle(double[] quaternion) {
         // quaternion 요소 추출
         double w = quaternion[0];
         double qx = quaternion[1];
@@ -112,7 +115,7 @@ public class RotateUtil {
         return new double[]{x, y, z, angle};
     }
 
-    public static double[] combineAxisAngles(double[] axis1, double angle1, double[] axis2, double angle2) {
+    public static double @NotNull [] combineAxisAngles(double[] axis1, double angle1, double[] axis2, double angle2) {
         // 각 axis-angle을 쿼터니언으로 변환
         double[] quaternion1 = axisangleToQuaternion(axis1, angle1);
         double[] quaternion2 = axisangleToQuaternion(axis2, angle2);
