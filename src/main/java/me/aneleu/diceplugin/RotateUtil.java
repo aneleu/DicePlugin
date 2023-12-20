@@ -1,5 +1,6 @@
 package me.aneleu.diceplugin;
 
+import org.apache.commons.math3.complex.Quaternion;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.util.Transformation;
 import org.jetbrains.annotations.NotNull;
@@ -74,6 +75,54 @@ public class RotateUtil {
         result[2] = (w * v1 * (1 - Math.cos(theta)) + z * Math.cos(theta) + (-v * x + u * y) * Math.sin(theta)) + origin[2];
 
         return result;
+    }
+
+    public static double[] axisangleToQuaternion(double[] axis, double angle) {
+        // axis를 정규화
+        double norm = Math.sqrt(axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]);
+        double x = axis[0] / norm;
+        double y = axis[1] / norm;
+        double z = axis[2] / norm;
+
+        // quaternion 계산
+        double w = Math.cos(angle / 2);
+        double qx = x * Math.sin(angle / 2);
+        double qy = y * Math.sin(angle / 2);
+        double qz = z * Math.sin(angle / 2);
+
+        return new double[]{w, qx, qy, qz};
+    }
+
+    public static double[] quaternionToAxisangle(double[] quaternion) {
+        // quaternion 요소 추출
+        double w = quaternion[0];
+        double qx = quaternion[1];
+        double qy = quaternion[2];
+        double qz = quaternion[3];
+
+        // angle 계산
+        double angle = 2 * Math.acos(w);
+
+        // axis 계산
+        double norm = Math.sqrt(1 - w * w);
+        double x = qx / norm;
+        double y = qy / norm;
+        double z = qz / norm;
+
+        return new double[]{x, y, z, angle};
+    }
+
+    public static double[] combineAxisAngles(double[] axis1, double angle1, double[] axis2, double angle2) {
+        // 각 axis-angle을 쿼터니언으로 변환
+        double[] quaternion1 = axisangleToQuaternion(axis1, angle1);
+        double[] quaternion2 = axisangleToQuaternion(axis2, angle2);
+        Quaternion q1 = new Quaternion(quaternion1[0], quaternion1[1], quaternion1[2], quaternion1[3]);
+        Quaternion q2 = new Quaternion(quaternion2[0], quaternion2[1], quaternion2[2], quaternion2[3]);
+
+        // 두 쿼터니언을 곱하여 회전을 결합
+        Quaternion combined = q1.multiply(q2);
+
+        return quaternionToAxisangle(new double[]{combined.getQ0(), combined.getQ1(), combined.getQ2(), combined.getQ3()});
     }
 
 }
